@@ -48,25 +48,30 @@ public class Bookmark {
        /**
      * แปลง RI ทุกข้อเป็น assert หนึ่งบรรทัด พร้อมข้อความอธิบาย
      */
-    // // private void checkRep() {
-    //     assert songs != null : "songs is not null" ; //เพลงต้องมีจริงและไม่เป็น null
-    //     assert songs.size() <= MAX_SONGS ; //ขนาดเพลงต้องไม่เกินขนาดที่กำหนด
-    //     Set<String> seen = new HashSet<>() ;
-    //     for (String s : songs) {
-    //         assert s != null ; //เพลงต้องไม่เป็น null
-    //         assert s != "" ; //เพลงต้องไม่เป็นสตริงว่าง
-    //         assert seen.add(s) ; //หาเพลงซ้ำ
-    //     }
-    // }
+     private void checkRep() {
+        assert pages != null : "pages is not null" ; // เว็บไซต์ต้องมีจริงและไม่เป็น null
+        assert pages.size() <= MaxBookMarkSize ; //ขนาดเว็บไซต์ต้องไม่เกินขนาดของบุ๊คมาร์คที่กำหนด
+        Set<String> seen = new HashSet<>() ;
+        for (String p : pages) {
+            assert p != null ; //เว็บไซต์ไม่เป็น null
+            assert p != "" ; //เว็บไซต์ต้องไม่เป็นสตริงว่าง
+            assert seen.add(p) ; //หาเว็บไซต์
+        }
+    }
 
 
 
     // =-----Creator-----=
 
-    // public HistoryBrowser() {
-    //     this.pages = new ArrayList<>();
-    //     checkRep();
-    // }
+    /**
+     * สร้างบุ๊คมารก์ว่าง
+     */
+                public Bookmark() {
+                this.pages = new ArrayList<>();
+                checkRep();
+    }
+
+
 
 
     /**
@@ -77,20 +82,20 @@ public class Bookmark {
      * @param initial Bookmark ต้องไม่ซ้ำและไม่เกิน Max_BookmarkSize
      * @throws IllegalArgumentException ถ้า initial ผิดเงื่อนไข
      */
-// public Playlist(List<String> initial) {
+        public Bookmark(List<String> initial) {
 
-//             if(initial == null) throw new IllegalArgumentException();
-//             if(initial.size()>MAX_BookmarkSize) throw new IllegalArgumentException();
-//             Set<String> seen = new HashSet<>();
-//             for(String s: initial){
-//                 if(s==null) throw new IllegalArgumentException();
-//                 if(s=="")throw new IllegalArgumentException();
-//                 if(!seen.add(s)) throw new IllegalArgumentException();
-//             }
+            if(initial == null) throw new IllegalArgumentException();
+            if(initial.size()>MaxBookMarkSize) throw new IllegalArgumentException();
+            Set<String> seen = new HashSet<>();
+            for(String b: initial){
+                if(b==null) throw new IllegalArgumentException();
+                if(b=="")throw new IllegalArgumentException();
+                if(!seen.add(b)) throw new IllegalArgumentException();
+            }
 
-//             this.songs = new ArrayList<>(initial);   // แก้บรรทัดนี้
-//             checkRep();
-//}
+            this.pages = new ArrayList<>(initial);   // แก้บรรทัดนี้
+            checkRep();
+}
 
 
         // ===== Mutators =====
@@ -101,56 +106,59 @@ public class Bookmark {
          * @return true ถ้าเพิ่มสำเร็จ, false ถ้ามีเพลงนี้อยู่แล้วหรือเต็มแล้ว
          * @throws IllegalArgumentException ถ้า page เป็น null หรือสตริงว่าง
          */
-//  public boolean add(String List) {
-            
-//         if(List==null || List =="") throw new IllegalArgumentException();
-//         if(List.contains(Lis9t)) return false ;
-//         if(List.size()==MaxBookmarkSize) return false;
+ public boolean add(String page) {
+        if(page==null || page =="") throw new IllegalArgumentException();
+        if(pages.contains(page)) return false ;
+        if(pages.size()==MaxBookMarkSize) return false;
 
 
-//             List.add(List) ;
-//             return true ;   // แก้บรรทัดนี้
-//         }
+            pages.add(page) ;
+            checkRep() ;
+            return true ;   // แก้บรรทัดนี้
+        }
      /**
-         * TODO 7: ลบเพลงออกจากเพลย์ลิสต์
-         *
-         * @param List ชื่อเพลงที่ต้องการลบ
-         * @return true ถ้าลบสำเร็จ, false ถ้าไม่พบเพลงนี้
+         * TODO 7: ลบบุ๊คมาร์ก
+         * @param List ชื่อบุ๊คมาร์กที่ต้องการลบ
+         * @return true ถ้าลบสำเร็จ, false ถ้าไม่พบบุ๊คมาร์กนี้
          */
-        // public boolean remove(String song) {
-        //     if(!List.contains(List))  return false;
+        public boolean remove(String page) {
+            if(!pages.contains(page))  return false;
 
-        //     List.remove(song);
-        //     return true ;   // แก้บรรทัดนี้
-        // }
+            pages.remove(page);
+            checkRep() ;
+            return true ;   // แก้บรรทัดนี้
+        }
   // ===== Observers =====
 
         /**
-         * TODO 8: คืนจำนวนเพลงในเพลย์ลิสต์
+         * คืนจำนวนเว็บไซต์ในบุ๊คมาร์ค
          */
-        // public int size() {
-        //     return page.size();   // แก้บรรทัดนี้
-        // }
+        public int size() {
+            return pages.size();   // แก้บรรทัดนี้
+        }
 
 /**
-         * TODO 9: ตรวจว่ามีBookmarkนี้อยู่หรือไม่
+         *  ตรวจว่ามีเว็บไซต์นี้อยู่ในบุ๊คมาร์คหรือไม่
          */
-        // public boolean contains(String song) {
-        //     return List.contains(List);   // แก้บรรทัดนี้
-        // }
+        public boolean contains(String page) {
+            return pages.contains(page);   // แก้บรรทัดนี้
+        }
 
         // ===== Producer =====
 
         /**
          * TODO 11: จัดการเรียงBookmarkตามลำดับตัวอักษรในภาษาอังกฤษ
-         *
          * ระวัง: ห้ามแก้เพลย์ลิสต์เดิม (this) เด็ดขาด
-         *
          * @return เพลย์ลิสต์ใหม่ที่สลับลำดับแล้ว
          */
-        // public List shuffled() {
-        //     List<String> copy = new ArrayList<>(songs);
-        //     Collections.shuffle(copy);
-        //     return new Playlist(copy);   // แก้บรรทัดนี้
+        public Bookmark sortedBookmark() {
+            List<String> sortedList = new ArrayList<>(pages);
+            Collections.sort(sortedList);
+            return new Bookmark(sortedList);   // แก้บรรทัดนี้
 
  }
+ @Override
+        public String toString() {
+            return pages.toString();
+        }
+}
