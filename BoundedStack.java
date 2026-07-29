@@ -1,8 +1,7 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
 public class BoundedStack{
 /**
  * BoundedStack - ADT แทนการเก็บจาน
@@ -17,22 +16,19 @@ public class BoundedStack{
  *  plateRack.pop() ;                      // จะหยิบจานใบบนสุดออกไป ("Plate B")
  * 
  */
-    public static final int Max_Capacity = 30; //ความจุของที่เก็บ
-    private final int capacity;
 
     //Representation
-    private final List<String>plates;
-
-    
+    private final List<String> plates;
+    private final int capacity;
     //Abstraction function
-    //Af(plates) = plate ในที่นี้จะหมายถึงจำนวนจานที่เราเก็บแล้วจะเข้าไปในตัวแปร Max_Capacity
+    //Af(plates,capacity) = ที่เก็บจานที่มีความจุ capacity ใบ โดยจะเก็บจานทุกใบที่นำเขามาใบไหนเข้ามาก่อนเอาไปไว้ล่างสุดเมื่อจะเอาจานออกจะเอาใบที่เข้าที่หลังสุดหรือก็คือใบบนออกก่อนเข้ากับ Last-In , First-Out
 
 
     /** Representation Invariant
      * plates ต้องไม่เป็น null
      * ไม่มีสมาชิกใน plates ที่เป็น  null
      * ไม่มีสมาชิกใน plates ที่เป็นสตริงว่าง
-     * plates.size <= Max_Capacity (30)
+     * plates.size <= capacity
      */
 
 
@@ -51,7 +47,7 @@ public class BoundedStack{
 private void checkRep() {
     assert plates != null : "plateRack must not be null " ;
     assert capacity > 0 : "capacity must have available space" ;
-    assert plates.size() <= Max_Capacity : "there too many plates" ;
+    assert plates.size() <= capacity : "there too many plates" ;
 
     for(String p : plates) {
         assert p != null : "plate is null" ;
@@ -65,33 +61,37 @@ private void checkRep() {
      * @param capacity จำนวนจานสูงสุดที่สามารถเก็บได้
      * @throws IllegalArgumentException ถ้า capacity <= 0
      */
-    public BoundedStack() {
+    public BoundedStack(int capacity) {
+        if (capacity <= 0){
+            throw new IllegalArgumentException("Capacity might not be negative") ;
+        }
+        this.capacity = capacity ;
         this.plates = new ArrayList<>();
         checkRep();
         
     }
 
         /**
-         * สร้าง Bounded stack มาโดย intial.get(0) คืิอจานล่างสุดและจานใบท้าย 
+         * สร้าง Bounded stack มาโดย initial.get(0) คือจานล่างสุดและจานใบท้าย 
          * 
-         * @param initial ลำดับจานเริ่มต้น ต้องไม่มีจานเริ่มต้นที่เป็น null/ว่าง และไม้เกิน Max_Capacity
-         * @throws IllegalArguementException ถ้า intial ผืดเงื่อนไข\
+         * @param initial ลำดับจานเริ่มต้น ต้องไม่มีจานเริ่มต้นที่เป็น null/ว่าง และไม้เกิน capacity
+         * @throws IllegalArgumentException ถ้า initial ผิดเงื่อนไข
          * 
          */
-            public BoundedStack(List <String> initial){
-            if(initial == null )throw new IllegalArgumentException();
-            if(initial.size()>Max_Capacity) throw new IllegalArgumentException();
-            Set<String> seen = new HashSet<>();
+            public BoundedStack(int capacity ,List <String> initial){
+            if (capacity <= 0) throw new IllegalArgumentException();
+            if(initial == null  || initial.isEmpty()) throw new IllegalArgumentException();
+            if(initial.size() > capacity) throw new IllegalArgumentException();
             for(String b:initial){
-                if(b==null)throw new IllegalArgumentException();
-                if(b.isEmpty())throw new IllegalArgumentException();
-                if(!seen.add(b))throw new IllegalArgumentException();
+            if(b==null)throw new IllegalArgumentException();
+            if(b.isEmpty())throw new IllegalArgumentException();
             }
             this.plates = new ArrayList<>(initial);
+            this.capacity = capacity;
             checkRep();
         }
 
-}
+
 
 
 
@@ -100,27 +100,98 @@ private void checkRep() {
     /**
      * 
      * @param plate จาน ต้องไม่เป็น null และไม่เป็นช่องว่าง
-     * @throws IllegalArgumentException ถ้า ที่เก็บจานเต็มแล้ว
+     * @throws IllegalStateException ถ้า ที่เก็บจานเต็มแล้ว
      * @throws IllegalArgumentException ถ้า จาน เป็น null หรือเป็นช่องว่าง
      */
-    // public void push(String plate) {
-    //     if(plate == null || plate.isEmpty()) throw new IllegalArgumentException() ;
-    //     if(plates.size() == Max_Capacity || plates.contains(plate)) throw new IllegalArgumentException("PlateRack is full") ;
+    public void push(String plate) {
+        if(plate == null || plate.isEmpty()) {
+            throw new IllegalArgumentException("Plate name cannot be null or whitespace") ;
+        }
 
-    //     plates.push(plate) ;
-    //     checkRep() ;
-    // }
+        if(isFull()){
+            throw new IllegalStateException("platRack is Full") ;
+        }
+
+        plates.add(plate) ;
+        checkRep() ;
+    }
     /**
      * ลบจาน
-     * 
+     * @return ชื่อ/ลายจานที่อยู่บนสุด
+     * @throws EmptyStackException ถ้ากองจานว่าง
      */
-    // public String pop() {
-    //     if (plates.isEmpty()) throw new EmptyStackException();
+       public String pop() {
+        if (plates.isEmpty()) throw new EmptyStackException();
  
-    //     String top = plates.remove(plates.size() - 1);
-    //     checkRep();
-    //     return top;
+        String top = plates.remove(plates.size() - 1);
+        checkRep();
+        return top;
+    }
 
+      // ===== Observers =====
+      /**
+       * ดูจานบนสุดของจานโดยไม่หยิบออก
+       * 
+       * @return ชื่อ/ลายจานอยู่ที่บนสุด
+       * @throws EmptyStackException ถ้ากองจานว่าง
+       */
+      public String peek(){
+        checkRep();
+        if(plates.isEmpty()) throw new EmptyStackException();
+        return plates.get(plates.size() -1);
+      }
+        /**
+         * คืนจำนวนจานในกอง
+         */
+        public int size(){
+            checkRep();
+            return plates.size();
+        }
+
+
+        /**
+         * ตรวจว่าจานในกองว่างหรือไม่
+         */
+        public boolean isEmpty(){
+            checkRep();
+            return plates.isEmpty();    
+        }
+        /**
+         * ตรวจว่ากองจานเต็มความจุ(capacity)หรือไม่
+         */
+        public boolean isFull(){
+            checkRep();
+            return plates.size() == capacity;
+        }
+      /**
+       * ตรวจว่ามีจานลาย/ชื่อนี้อยู่ในกองหรือไม่(ไม่ว่าจะอยู่ในตำแหน่งใด)
+       */
+      public boolean contains(String plate){
+        checkRep();
+        return plates.contains(plate);
+      }
+
+            // ===== Producer =====//
+/**
+     * ทำการสร้างจานโดยที่มีองค์ประกอบเดิมทุกอย่าง
+     * ในการสร้างครั้งนี้จะไม่ส่งผลกระทบกับข้อมูลเดิม
+     * 
+     * @return BoundedStack ที่จัดเก็บจานใหม่ที่มีขนาดและลำดับเหมือนเดิม
+     */
+    public BoundedStack copy() {
+        checkRep();
+        return new BoundedStack(this.capacity, this.plates);
+    }
+
+
+      @Override
+      public String toString(){
+        //แสดงจากด้านบนไปล่างสุด
+        List<String> topToBottom = new ArrayList<>(plates);
+        Collections.reverse(topToBottom);
+        return topToBottom.toString();
+      }
+    
 
 
 }
