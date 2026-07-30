@@ -73,7 +73,7 @@ private final List<String>plates
 
 
 
-**RI** ต้องเขียนให้ครบทั้ง 5 ข้อ
+**RI** ต้องเขียนให้ครบทั้ง 4 ข้อ
 
 **Safety from rep exposure** ให้อธิบายวิธีการป้องกันการรั่วด้วยวิธีการอะไร
 
