@@ -20,10 +20,12 @@ public class BoundedStack{
     //Representation
     private final List<String> plates;
     private final int capacity;
+
+    // TODO 1 : เขียน Abstrasction Funtion
     //Abstraction function
     //Af(plates,capacity) = ที่เก็บจานที่มีความจุ capacity ใบ โดยจะเก็บจานทุกใบที่นำเขามาใบไหนเข้ามาก่อนเอาไปไว้ล่างสุดเมื่อจะเอาจานออกจะเอาใบที่เข้าที่หลังสุดหรือก็คือใบบนออกก่อนเข้ากับ Last-In , First-Out
 
-
+    //TODO 2: เขียน Representation Invariant ตรงนี้ (4 ข้อ)
     /** Representation Invariant
      * plates ต้องไม่เป็น null
      * ไม่มีสมาชิกใน plates ที่เป็น  null
@@ -31,7 +33,7 @@ public class BoundedStack{
      * plates.size <= capacity
      */
 
-
+    // TODO 3 : เขียน Safety from rep exposure
     //Safety from rep exposure:
     //   - plates เป็น private และ final จึงไม่มีทางถูกแทนที่ด้วย reference อื่นจากภายนอก
     //   - constructor คัดลอกข้อมูลเข้ามาใหม่ (new ArrayList<>(initial)) ไม่เก็บ reference ตรง ๆ
@@ -41,11 +43,11 @@ public class BoundedStack{
     
 
 /**
+ * TODO 4 : เขียน checkRep()
  * ตรวจสอบว่า RI ต้องเป็นจริงเสมอ
- * 
  */ 
 private void checkRep() {
-    assert plates != null : "plateRack must not be null " ;
+    assert plates != null : "plateRack is null " ;
     assert capacity > 0 : "capacity must have available space" ;
     assert plates.size() <= capacity : "there too many plates" ;
 
@@ -55,7 +57,7 @@ private void checkRep() {
     }
 }
      // =-----Creator-----=
- /**
+ /**   
      * สร้าง BoundedStack ว่าง (ยังไม่มีจานซ้อนอยู่)
      * 
      * @param capacity จำนวนจานสูงสุดที่สามารถเก็บได้
@@ -73,14 +75,14 @@ private void checkRep() {
 
         /**
          * สร้าง Bounded stack มาโดย initial.get(0) คือจานล่างสุดและจานใบท้าย 
-         * 
-         * @param initial ลำดับจานเริ่มต้น ต้องไม่มีจานเริ่มต้นที่เป็น null/ว่าง และไม้เกิน capacity
+         * TODO 5 : Creator ตัวที่สอง
+         * @param initial ลำดับจานเริ่มต้น ต้องไม่มีจานเริ่มต้นที่เป็น null/ว่าง และไม่เกิน capacity
          * @throws IllegalArgumentException ถ้า initial ผิดเงื่อนไข
          * 
          */
             public BoundedStack(int capacity ,List <String> initial){
             if (capacity <= 0) throw new IllegalArgumentException();
-            if(initial == null  || initial.isEmpty()) throw new IllegalArgumentException();
+            if(initial == null ) throw new IllegalArgumentException();
             if(initial.size() > capacity) throw new IllegalArgumentException();
             for(String b:initial){
             if(b==null)throw new IllegalArgumentException();
@@ -98,7 +100,7 @@ private void checkRep() {
     // ===Mutator===
     
     /**
-     * 
+     * TODO 6 : เพิ่มจานเข้าไปในที่วางจานโดยเพิ่มใบบนสุด (โดยใช้ push)
      * @param plate จาน ต้องไม่เป็น null และไม่เป็นช่องว่าง
      * @throws IllegalStateException ถ้า ที่เก็บจานเต็มแล้ว
      * @throws IllegalArgumentException ถ้า จาน เป็น null หรือเป็นช่องว่าง
@@ -116,6 +118,7 @@ private void checkRep() {
         checkRep() ;
     }
     /**
+     * TODO 7 : นำจานใบบนสุดออกไป
      * ลบจาน
      * @return ชื่อ/ลายจานที่อยู่บนสุด
      * @throws EmptyStackException ถ้ากองจานว่าง
@@ -130,6 +133,7 @@ private void checkRep() {
 
       // ===== Observers =====
       /**
+       * TODO 8 : ดูจานใบบน
        * ดูจานบนสุดของจานโดยไม่หยิบออก
        * 
        * @return ชื่อ/ลายจานอยู่ที่บนสุด
@@ -147,9 +151,13 @@ private void checkRep() {
             checkRep();
             return plates.size();
         }
-
+    public int capacity() {
+    checkRep();
+    return this.capacity;
+    }
 
         /**
+         * TODO 9 : ตรวจดูว่าจานในที่เก็บว่างหรือไม่
          * ตรวจว่าจานในกองว่างหรือไม่
          */
         public boolean isEmpty(){
@@ -157,6 +165,7 @@ private void checkRep() {
             return plates.isEmpty();    
         }
         /**
+         * TODO 10 : ตรวจว่าจานเก็บเต็มพื้นที่ความจุที่มีให้หรือไม่
          * ตรวจว่ากองจานเต็มความจุ(capacity)หรือไม่
          */
         public boolean isFull(){
@@ -164,6 +173,7 @@ private void checkRep() {
             return plates.size() == capacity;
         }
       /**
+       * TODO 11 : ค้นหาหรือตรวจว่ามีลายจานอยู่หรือไม่
        * ตรวจว่ามีจานลาย/ชื่อนี้อยู่ในกองหรือไม่(ไม่ว่าจะอยู่ในตำแหน่งใด)
        */
       public boolean contains(String plate){
@@ -173,6 +183,7 @@ private void checkRep() {
 
             // ===== Producer =====//
 /**
+ * TODO 12 : นำจานลายเดิมทุกอย่างไปไว้อีกที่เก็บหนึ่ง
      * ทำการสร้างจานโดยที่มีองค์ประกอบเดิมทุกอย่าง
      * ในการสร้างครั้งนี้จะไม่ส่งผลกระทบกับข้อมูลเดิม
      * 
